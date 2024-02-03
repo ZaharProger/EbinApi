@@ -1,0 +1,5 @@
+EbinApi/bin
+*.suo
+*.user
+EbinApi/obj
+appsettings.json
