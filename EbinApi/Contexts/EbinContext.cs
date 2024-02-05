@@ -12,5 +12,7 @@ namespace EbinApi.Contexts
         public DbSet<Update> Updates { get; set; }
         public DbSet<Company> Companies { get; set; }
         public DbSet<UserApp> UserApps { get; set; }
+        public DbSet<AuthCode> AuthCodes { get; set; }
+        public DbSet<Role> Roles { get; set; }
     }   
 }

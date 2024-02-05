@@ -8,11 +8,11 @@ namespace EbinApi.Models.Db
     {
         public long UserId { get; set; }
 
-        public User? User { get; set; }
+        public virtual User? User { get; set; }
 
         public long AppId { get; set; }
 
-        public App? App { get; set; }
+        public virtual App? App { get; set; }
 
         [Required, Column("date")]
         public long Date { get; set; }

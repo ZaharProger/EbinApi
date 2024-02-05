@@ -9,8 +9,8 @@ namespace EbinApi.Models.Db
         [Required, Column("name", TypeName = "varchar(100)")]
         public string Name { get; set; }
         
-        public List<User> Users { get; set; } = [];
+        public virtual List<User> Users { get; set; } = [];
 
-        public List<App> Apps { get; set; } = [];
+        public virtual List<App> Apps { get; set; } = [];
     }
 }

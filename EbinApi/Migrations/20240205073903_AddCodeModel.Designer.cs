@@ -3,6 +3,7 @@ using System;
 using EbinApi.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace EbinApi.Migrations
 {
     [DbContext(typeof(EbinContext))]
-    partial class EbinContextModelSnapshot : ModelSnapshot
+    [Migration("20240205073903_AddCodeModel")]
+    partial class AddCodeModel
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -137,14 +140,13 @@ namespace EbinApi.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
-                    b.Property<string>("Code")
-                        .IsRequired()
-                        .HasColumnType("text")
+                    b.Property<short>("Code")
+                        .HasColumnType("smallint")
                         .HasColumnName("code");
 
                     b.Property<string>("Phone")
                         .IsRequired()
-                        .HasColumnType("varchar(20)")
+                        .HasColumnType("varchar(10)")
                         .HasColumnName("phone");
 
                     b.HasKey("Id");
@@ -210,25 +212,6 @@ namespace EbinApi.Migrations
                     b.ToTable("Reviews");
                 });
 
-            modelBuilder.Entity("EbinApi.Models.Db.Role", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint")
-                        .HasColumnName("id");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("varchar(30)")
-                        .HasColumnName("name");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Roles");
-                });
-
             modelBuilder.Entity("EbinApi.Models.Db.Update", b =>
                 {
                     b.Property<long>("Id")
@@ -281,27 +264,15 @@ namespace EbinApi.Migrations
                     b.Property<long>("CompanyId")
                         .HasColumnType("bigint");
 
-                    b.Property<string>("LastName")
+                    b.Property<string>("Fullname")
                         .IsRequired()
-                        .HasColumnType("varchar(30)")
-                        .HasColumnName("last_name");
-
-                    b.Property<string>("MiddleName")
-                        .HasColumnType("varchar(50)")
-                        .HasColumnName("middle_name");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("varchar(30)")
-                        .HasColumnName("name");
+                        .HasColumnType("varchar(100)")
+                        .HasColumnName("fullname");
 
                     b.Property<string>("Phone")
                         .IsRequired()
-                        .HasColumnType("varchar(20)")
+                        .HasColumnType("varchar(10)")
                         .HasColumnName("phone");
-
-                    b.Property<long>("RoleId")
-                        .HasColumnType("bigint");
 
                     b.Property<string>("Status")
                         .IsRequired()
@@ -311,8 +282,6 @@ namespace EbinApi.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("CompanyId");
-
-                    b.HasIndex("RoleId");
 
                     b.ToTable("Users");
                 });
@@ -425,15 +394,7 @@ namespace EbinApi.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("EbinApi.Models.Db.Role", "Role")
-                        .WithMany()
-                        .HasForeignKey("RoleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.Navigation("Company");
-
-                    b.Navigation("Role");
                 });
 
             modelBuilder.Entity("EbinApi.Models.Db.UserApp", b =>

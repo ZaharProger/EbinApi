@@ -28,14 +28,14 @@ namespace EbinApi.Models.Db
         [Column("images", TypeName = "varchar(500)")]
         public string? Images { get; set; }
 
-        public List<Update> Updates { get; set; } = [];
+        public virtual List<Update> Updates { get; set; } = [];
 
-        public List<User> Users { get; set; } = [];
+        public virtual List<User> Users { get; set; } = [];
 
-        public List<UserApp> UserApps { get; set; } = [];
+        public virtual List<UserApp> UserApps { get; set; } = [];
 
-        public List<Review> Reviews { get; set; } = [];
+        public virtual List<Review> Reviews { get; set; } = [];
 
-        public List<Company> Companies { get; set; } = [];
+        public virtual List<Company> Companies { get; set; } = [];
     }
 }

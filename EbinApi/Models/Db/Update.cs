@@ -8,7 +8,7 @@ namespace EbinApi.Models.Db
     {
         public long AppId { get; set; }
 
-        public App? App { get; set; }
+        public virtual App? App { get; set; }
 
         [Required, Column("version", TypeName = "varchar(20)")]
         public string Version { get; set;}

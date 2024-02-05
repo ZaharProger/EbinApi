@@ -10,6 +10,6 @@ namespace EbinApi.Models.Db
         public bool PushInstall { get; set; } = true;
         public bool PushUpdate { get; set; } = true;
         public long UserId { get; set; }
-        public User? User { get; set; }
+        public virtual User? User { get; set; }
     }
 }
