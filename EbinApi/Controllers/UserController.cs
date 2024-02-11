@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
 
 namespace EbinApi.Controllers
 {
@@ -22,7 +23,7 @@ namespace EbinApi.Controllers
         public async Task<IActionResult> SendCode([FromForm][Required] string phone)
         {
             IActionResult response;
-
+                    
             try
             {
                 await _service.GenerateCode(phone);
@@ -95,7 +96,7 @@ namespace EbinApi.Controllers
                 Message = ""
             });
 
-            if (authorizedUser.Length != 0)
+            if (!authorizedUser.IsNullOrEmpty())
             {
                 var userId = long.Parse(authorizedUser[0].Value);
                 var foundUser = await _service.GetUserById(userId);

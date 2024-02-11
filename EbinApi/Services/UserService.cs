@@ -49,6 +49,7 @@ namespace EbinApi.Services
             var foundUser = await _context.Users
                 .Include(user => user.Account)
                 .Include(user => user.Company)
+                .Include(user => user.Role)
                 .Where(user => user.Id == id)
                 .ToArrayAsync();
             

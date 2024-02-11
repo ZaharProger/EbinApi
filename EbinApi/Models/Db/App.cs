@@ -37,5 +37,23 @@ namespace EbinApi.Models.Db
         public virtual List<Review> Reviews { get; set; } = [];
 
         public virtual List<Company> Companies { get; set; } = [];
+
+        [NotMapped]
+        public string? Size { get; set; }
+
+        [NotMapped]
+        public bool IsInstalled { get; set; }
+
+        [NotMapped]
+        public string Access { get; set; }
+
+        [NotMapped]
+        public int Downloads { get; set; }
+
+        [NotMapped]
+        public Update? LastUpdate { get; set; }
+
+        [NotMapped]
+        public float Rating { get; set; }
     }
 }

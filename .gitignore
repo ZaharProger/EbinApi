@@ -3,3 +3,4 @@ EbinApi/bin
 *.user
 EbinApi/obj
 appsettings.json
+Repository/
