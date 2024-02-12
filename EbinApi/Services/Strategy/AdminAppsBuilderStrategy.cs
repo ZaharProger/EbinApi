@@ -2,7 +2,6 @@ using EbinApi.Contexts;
 using EbinApi.Extensions;
 using EbinApi.Models.Db;
 using EbinApi.Models.Enums;
-using Microsoft.IdentityModel.Tokens;
 
 namespace EbinApi.Services.Strategy
 {
@@ -17,12 +16,12 @@ namespace EbinApi.Services.Strategy
                     Name = app.Name,
                     Icon = app.Icon,
                     Developer = app.Developer,
-                    Access = app.Users.IsNullOrEmpty()? 
+                    Access = app.Users.Count == 0? 
                         AppAccesses.CLOSE.GetStringValue() : 
                         AppAccesses.OPEN.GetStringValue(),
                     Status = app.Status,
                     Downloads = app.Users.Count,
-                    LastUpdate = !app.Updates.IsNullOrEmpty()?
+                    LastUpdate = app.Updates.Count != 0?
                         app.Updates.OrderBy(update => -update.Date).First() :
                         null,
                     Rating = app.Reviews.Count == 0?

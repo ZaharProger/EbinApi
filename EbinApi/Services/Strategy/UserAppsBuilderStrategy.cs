@@ -1,7 +1,6 @@
 using EbinApi.Contexts;
 using EbinApi.Extensions;
 using EbinApi.Models.Db;
-using Microsoft.IdentityModel.Tokens;
 
 namespace EbinApi.Services.Strategy
 {
@@ -19,7 +18,7 @@ namespace EbinApi.Services.Strategy
                     Id = app.Id,
                     Name = app.Name,
                     Icon = app.Icon,
-                    Size = !app.Updates.IsNullOrEmpty()?
+                    Size = app.Updates.Count != 0?
                         new FileInfo(
                             app.Updates
                                 .OrderBy(update => -update.Date)

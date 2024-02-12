@@ -7,26 +7,23 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.Tokens;
 
 namespace EbinApi.Controllers
 {
     [ApiController]
     [Route("api/users")]
-    public class UserController(UserService service): ControllerBase
+    public class UserController(UserService service) : EbinController(service)
     {
-        private readonly UserService _service = service;
-
         [HttpPost]
         [AllowAnonymous]
         [Route("code")]
         public async Task<IActionResult> SendCode([FromForm][Required] string phone)
         {
             IActionResult response;
-                    
+
             try
             {
-                await _service.GenerateCode(phone);
+                await _userService.GenerateCode(phone);
                 response = Ok(new BaseResponse()
                 {
                     Message = ""
@@ -49,7 +46,7 @@ namespace EbinApi.Controllers
         public async Task<IActionResult> AuthorizeUser([FromForm] UserAuthorizeData userData)
         {
             IActionResult response;
-            var authorizedUser = await _service.AuthorizeUser(userData);
+            var authorizedUser = await _userService.AuthorizeUser(userData);
 
             if (authorizedUser != null)
             {
@@ -58,12 +55,12 @@ namespace EbinApi.Controllers
                     new("user_id", authorizedUser.Id.ToString())
                 };
                 var claimsIdentity = new ClaimsIdentity(
-                    claims, 
+                    claims,
                     CookieAuthenticationDefaults.AuthenticationScheme
                 );
 
                 await HttpContext.SignInAsync(
-                    CookieAuthenticationDefaults.AuthenticationScheme, 
+                    CookieAuthenticationDefaults.AuthenticationScheme,
                     new ClaimsPrincipal(claimsIdentity)
                 );
 
@@ -88,44 +85,36 @@ namespace EbinApi.Controllers
         [Authorize]
         public async Task<IActionResult> GetUserInfo()
         {
-            var authorizedUser = HttpContext.User.Claims
-                .Where(claim => claim.Type == "user_id")
-                .ToArray();
+            var authorizedUser = await CheckSession();
             IActionResult response = Unauthorized(new BaseResponse()
             {
                 Message = ""
             });
 
-            if (!authorizedUser.IsNullOrEmpty())
+            if (authorizedUser != null)
             {
-                var userId = long.Parse(authorizedUser[0].Value);
-                var foundUser = await _service.GetUserById(userId);
-
-                if (foundUser != null)
+                response = new JsonResult(new SingleObjectResponse<User>()
                 {
-                    response = new JsonResult(new SingleObjectResponse<User>()
+                    Message = "",
+                    Object = new User()
                     {
-                        Message = "",
-                        Object = new User()
+                        Id = authorizedUser.Id,
+                        Name = authorizedUser.Name,
+                        Status = authorizedUser.Status,
+                        CompanyId = authorizedUser.CompanyId,
+                        Company = new()
                         {
-                            Id = foundUser.Id,
-                            Name = foundUser.Name,
-                            Status = foundUser.Status,
-                            CompanyId = foundUser.CompanyId,
-                            Company = new()
-                            {
-                                Name = foundUser.Company.Name
-                            },
-                            Account = new()
-                            {
-                                DarkTheme = foundUser.Account.DarkTheme,
-                                PushInstall = foundUser.Account.PushInstall,
-                                PushUpdate = foundUser.Account.PushUpdate,
-                                UserId = foundUser.Id
-                            }
+                            Name = authorizedUser.Company.Name
+                        },
+                        Account = new()
+                        {
+                            DarkTheme = authorizedUser.Account.DarkTheme,
+                            PushInstall = authorizedUser.Account.PushInstall,
+                            PushUpdate = authorizedUser.Account.PushUpdate,
+                            UserId = authorizedUser.Id
                         }
-                    });
-                }
+                    }
+                });
             }
 
             return response;
