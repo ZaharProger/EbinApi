@@ -17,7 +17,7 @@ namespace EbinApi.Controllers
         [HttpPost]
         [AllowAnonymous]
         [Route("code")]
-        public async Task<IActionResult> SendCode([FromForm][Required] string phone)
+        public async Task<IActionResult> SendCode([FromBody][Required] string phone)
         {
             IActionResult response;
 
@@ -43,7 +43,7 @@ namespace EbinApi.Controllers
         [HttpPost]
         [AllowAnonymous]
         [Route("auth")]
-        public async Task<IActionResult> AuthorizeUser([FromForm] UserAuthorizeData userData)
+        public async Task<IActionResult> AuthorizeUser([FromBody] UserAuthorizeData userData)
         {
             IActionResult response;
             var authorizedUser = await _userService.AuthorizeUser(userData);

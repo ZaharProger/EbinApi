@@ -154,5 +154,111 @@ namespace EbinApi.Controllers
 
             return response;
         }
+
+        [HttpPost]
+        public async Task<IActionResult> PublishApp([FromForm] PublishAppData appData)
+        {
+            var authorizedUser = await CheckSession();
+            IActionResult response = Unauthorized(new BaseResponse()
+            {
+                Message = ""
+            });
+
+            if (authorizedUser != null)
+            {
+                var userRole = authorizedUser.Role.Name.ToLower();
+                if (userRole.Equals(UserRoles.ADMIN.GetStringValue().ToLower()))
+                {
+                    var isSuccessful = await _appService.PublishApp(appData);
+                    if (isSuccessful)
+                    {
+                        response = Ok(new BaseResponse()
+                        {
+                            Message = ""
+                        });
+                    }
+                    else
+                    {
+                        response = BadRequest(new BaseResponse()
+                        {
+                            Message = "Произошла ошибка при публикации приложения!"
+                        });
+                    }
+                }
+            }
+
+            return response;
+        }
+
+        [HttpPost]
+        [Route("update")]
+        public async Task<IActionResult> UpdateApp([FromForm] UpdateData updateData)
+        {
+            var authorizedUser = await CheckSession();
+            IActionResult response = Unauthorized(new BaseResponse()
+            {
+                Message = ""
+            });
+
+            if (authorizedUser != null)
+            {
+                var userRole = authorizedUser.Role.Name.ToLower();
+                if (userRole.Equals(UserRoles.ADMIN.GetStringValue().ToLower()))
+                {
+                    var isSuccessful = await _appService.UpdateApp(updateData);
+                    if (isSuccessful)
+                    {
+                        response = Ok(new BaseResponse()
+                        {
+                            Message = ""
+                        });
+                    }
+                    else
+                    {
+                        response = BadRequest(new BaseResponse()
+                        {
+                            Message = "Произошла ошибка при обновлении приложения!"
+                        });
+                    }
+                }
+            }
+
+            return response;
+        }
+
+        [HttpPut]
+        public async Task<IActionResult> EditApp([FromForm] EditAppData appData)
+        {
+            var authorizedUser = await CheckSession();
+            IActionResult response = Unauthorized(new BaseResponse()
+            {
+                Message = ""
+            });
+
+            if (authorizedUser != null)
+            {
+                var userRole = authorizedUser.Role.Name.ToLower();
+                if (userRole.Equals(UserRoles.ADMIN.GetStringValue().ToLower()))
+                {
+                    var isSuccessful = await _appService.EditApp(appData);
+                    if (isSuccessful)
+                    {
+                        response = Ok(new BaseResponse()
+                        {
+                            Message = ""
+                        });
+                    }
+                    else
+                    {
+                        response = BadRequest(new BaseResponse()
+                        {
+                            Message = "Произошла ошибка при редактировании приложения!"
+                        });
+                    }
+                }
+            }
+
+            return response;
+        }
     }
 }

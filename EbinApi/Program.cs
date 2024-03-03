@@ -3,6 +3,7 @@ using EbinApi.Contexts;
 using EbinApi.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.FileProviders;
 
 namespace EbinApi
 {
@@ -20,6 +21,8 @@ namespace EbinApi
                 options.JsonSerializerOptions.WriteIndented = true;
             });
 
+            builder.Services.AddCors();
+
             builder.Services.AddAuthorization();
             builder.Services.AddSession(options =>
             {
@@ -28,6 +31,7 @@ namespace EbinApi
                 options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
                 options.Cookie.IsEssential = true;
                 options.IdleTimeout = TimeSpan.FromDays(14);
+                options.Cookie.SameSite = SameSiteMode.None;
             });
             builder.Services.AddDistributedMemoryCache();
             builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
@@ -39,6 +43,7 @@ namespace EbinApi
                     options.Cookie.HttpOnly = true;
                     options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
                     options.Cookie.IsEssential = true;
+                    options.Cookie.SameSite = SameSiteMode.None;
                 });
 
             builder.Services.AddDbContext<EbinContext>(options =>
@@ -60,11 +65,25 @@ namespace EbinApi
                 app.UseSwaggerUI();
             }
 
+            app.UseStaticFiles(new StaticFileOptions
+            {
+                FileProvider = new PhysicalFileProvider(
+                    Path.Combine(builder.Environment.ContentRootPath, "Repository")
+                ),
+                RequestPath = "/EbinApi/Repository"
+            });
+
             app.UseHttpsRedirection();
             app.UseAuthentication();
             app.UseAuthorization();
             app.UseSession();
             app.MapControllers();
+
+            app.UseCors(x => x
+                .WithOrigins("http://localhost:3000")
+                .AllowCredentials()
+                .AllowAnyMethod()
+                .AllowAnyHeader());
 
             app.Run();
         }

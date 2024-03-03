@@ -4,3 +4,4 @@ EbinApi/bin
 EbinApi/obj
 appsettings.json
 Repository/
+.DS_Store

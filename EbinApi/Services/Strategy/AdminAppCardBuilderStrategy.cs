@@ -1,6 +1,7 @@
 using EbinApi.Contexts;
 using EbinApi.Extensions;
 using EbinApi.Models.Db;
+using EbinApi.Models.Enums;
 using Microsoft.EntityFrameworkCore;
 
 namespace EbinApi.Services.Strategy
@@ -13,15 +14,18 @@ namespace EbinApi.Services.Strategy
         {
             return base.Build(context)
                 .Where(app => app.Id == _appId)
-                .Include(app => app.Updates)
                 .Include(app => app.Reviews)
                 .ThenInclude(review => review.User)
+                .Include(app => app.Updates)
                 .Select(app => new App()
                 {
                     Id = app.Id,
                     Name = app.Name,
                     Status = app.Status,
                     Icon = app.Icon,
+                    Access = app.Users.Count == 0? 
+                        AppAccesses.CLOSE.GetStringValue() : 
+                        AppAccesses.OPEN.GetStringValue(),
                     Description = app.Description,
                     Developer = app.Developer,
                     Images = app.Images,

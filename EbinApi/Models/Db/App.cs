@@ -18,9 +18,9 @@ namespace EbinApi.Models.Db
         [Column("description", TypeName = "varchar(500)")]
         public string? Description { get; set; }
 
-        public byte? MinIos { get; set; }
+        public string? MinIos { get; set; }
 
-        public float? MinAndroid { get; set; }
+        public string? MinAndroid { get; set; }
 
         [Column("icon", TypeName = "varchar(100)")]
         public string? Icon { get; set; }
