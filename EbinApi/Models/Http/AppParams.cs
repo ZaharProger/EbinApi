@@ -4,5 +4,6 @@ namespace EbinApi.Models.Http
     {
         public bool IsInstalled { get; set; }
         public bool IsTest { get; set; }
+        public bool IsShort { get; set; }
     }
 }

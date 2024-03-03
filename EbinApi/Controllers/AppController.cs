@@ -34,7 +34,10 @@ namespace EbinApi.Controllers
 
                 if (userRole.Equals(UserRoles.ADMIN.GetStringValue().ToLower()))
                 {
-                    apps = await _appService.GetApps(new AdminAppsBuilderStrategy());
+                    AppsBuilderStrategy strategy = appParams.IsShort ?
+                        new ShortAppsBuilderStrategy() :
+                        new AdminAppsBuilderStrategy();
+                    apps = await _appService.GetApps(strategy);
                 }
                 else if (userRole.Equals(UserRoles.USER.GetStringValue().ToLower()))
                 {
