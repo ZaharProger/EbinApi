@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace EbinApi.Models.Db
 {
@@ -18,8 +19,10 @@ namespace EbinApi.Models.Db
         [Column("description", TypeName = "varchar(500)")]
         public string? Description { get; set; }
 
+        [JsonPropertyName("min_ios")]
         public string? MinIos { get; set; }
 
+        [JsonPropertyName("min_android")]
         public string? MinAndroid { get; set; }
 
         [Column("icon", TypeName = "varchar(100)")]

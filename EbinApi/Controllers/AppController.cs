@@ -159,6 +159,7 @@ namespace EbinApi.Controllers
         }
 
         [HttpPost]
+        [DisableRequestSizeLimit]
         public async Task<IActionResult> PublishApp([FromForm] PublishAppData appData)
         {
             var authorizedUser = await CheckSession();
@@ -195,6 +196,7 @@ namespace EbinApi.Controllers
 
         [HttpPost]
         [Route("update")]
+        [DisableRequestSizeLimit]
         public async Task<IActionResult> UpdateApp([FromForm] UpdateData updateData)
         {
             var authorizedUser = await CheckSession();

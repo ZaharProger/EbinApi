@@ -2,6 +2,7 @@ using EbinApi.Contexts;
 using EbinApi.Extensions;
 using EbinApi.Models.Db;
 using EbinApi.Models.Enums;
+using Microsoft.EntityFrameworkCore;
 
 namespace EbinApi.Services.Strategy
 {
@@ -10,6 +11,7 @@ namespace EbinApi.Services.Strategy
         public override IQueryable<App> Build(EbinContext context)
         {
             return base.Build(context)
+                .Include(app => app.Updates)
                 .Select(app => new App()
                 {
                     Id = app.Id,
@@ -26,7 +28,8 @@ namespace EbinApi.Services.Strategy
                         null,
                     Rating = app.Reviews.Count == 0?
                         0.0F :
-                        app.Reviews.Sum(review => review.Rating) / app.Reviews.Count
+                        app.Reviews.Sum(review => review.Rating) / app.Reviews.Count,
+                    Updates = app.Updates
                 });
         }
     }

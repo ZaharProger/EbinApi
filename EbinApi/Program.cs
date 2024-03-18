@@ -70,7 +70,7 @@ namespace EbinApi
                 FileProvider = new PhysicalFileProvider(
                     Path.Combine(builder.Environment.ContentRootPath, "Repository")
                 ),
-                RequestPath = "/EbinApi/Repository"
+                RequestPath = "/Repository"
             });
 
             app.UseHttpsRedirection();

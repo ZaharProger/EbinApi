@@ -112,7 +112,7 @@ namespace EbinApi.Services
                 newApp.Updates.Add(new Update()
                 {
                     Version = appData.Version,
-                    Date = DateTimeOffset.UtcNow.ToUnixTimeSeconds(),
+                    Date = DateTimeOffset.UtcNow.ToUnixTimeSeconds() * 1000,
                     Description = appData.Description,
                     TestFlight = appData.TestFlight,
                     FilePath = apkFilePath
@@ -164,7 +164,7 @@ namespace EbinApi.Services
                     {
                         Version = updateData.Version,
                         Description = updateData.Description,
-                        Date = DateTimeOffset.UtcNow.ToUnixTimeSeconds(),
+                        Date = DateTimeOffset.UtcNow.ToUnixTimeSeconds() * 1000,
                         TestFlight = updateData.TestFlight,
                         FilePath = apkFilePath,
                         App = foundApp[0]
