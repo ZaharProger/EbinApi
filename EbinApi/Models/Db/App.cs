@@ -28,7 +28,7 @@ namespace EbinApi.Models.Db
         [Column("icon", TypeName = "varchar(100)")]
         public string? Icon { get; set; }
 
-        [Column("images", TypeName = "varchar(500)")]
+        [Column("images", TypeName = "varchar(5000)")]
         public string? Images { get; set; }
 
         public virtual List<Update> Updates { get; set; } = [];
