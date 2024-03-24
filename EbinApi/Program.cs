@@ -2,6 +2,7 @@ using System.Text.Json.Serialization;
 using EbinApi.Contexts;
 using EbinApi.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
 
@@ -64,13 +65,16 @@ namespace EbinApi
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
-
+            
+            FileExtensionContentTypeProvider contentTypes = new();
+            contentTypes.Mappings[".apk"] = "application/vnd.android.package-archive";
             app.UseStaticFiles(new StaticFileOptions
             {
                 FileProvider = new PhysicalFileProvider(
                     Path.Combine(builder.Environment.ContentRootPath, "Repository")
                 ),
-                RequestPath = "/Repository"
+                RequestPath = "/Repository",
+                ContentTypeProvider = contentTypes
             });
 
             app.UseHttpsRedirection();
