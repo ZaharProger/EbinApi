@@ -65,7 +65,7 @@ namespace EbinApi
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
-            
+
             FileExtensionContentTypeProvider contentTypes = new();
             contentTypes.Mappings[".apk"] = "application/vnd.android.package-archive";
             app.UseStaticFiles(new StaticFileOptions
