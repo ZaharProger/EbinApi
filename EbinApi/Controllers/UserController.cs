@@ -23,10 +23,10 @@ namespace EbinApi.Controllers
 
             try
             {
-                await _userService.GenerateCode(phone);
+                var generatedCode = await _userService.GenerateCode(phone);
                 response = Ok(new BaseResponse()
                 {
-                    Message = ""
+                    Message = generatedCode
                 });
             }
             catch (Exception)

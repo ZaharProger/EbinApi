@@ -10,16 +10,19 @@ namespace EbinApi.Services
         private readonly EbinContext _context = context;
         private static readonly Random _random = new();
 
-        public async Task GenerateCode(string phone)
+        public async Task<string> GenerateCode(string phone)
         {
+            var newCode = _random.Next(10000).ToString("D4");
             var newCodePhonePair = new AuthCode()
             {
                 Phone = phone,
-                Code = _random.Next(10000).ToString("D4")
+                Code = newCode
             };
 
             await _context.AuthCodes.AddAsync(newCodePhonePair);
             await _context.SaveChangesAsync();
+
+            return newCode;
         }
 
         public async Task<User?> AuthorizeUser(UserAuthorizeData userData)
