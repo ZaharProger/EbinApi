@@ -83,11 +83,11 @@ namespace EbinApi
             app.UseSession();
             app.MapControllers();
 
-            app.UseCors(x => x
-                .WithOrigins("http://77.222.60.86:8080")
-                .AllowCredentials()
-                .AllowAnyMethod()
-                .AllowAnyHeader());
+            // app.UseCors(x => x
+            //     .WithOrigins("http://77.222.60.86:8080")
+            //     .AllowCredentials()
+            //     .AllowAnyMethod()
+            //     .AllowAnyHeader());
 
             app.Run();
         }
