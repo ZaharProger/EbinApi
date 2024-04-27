@@ -1,5 +1,7 @@
 using EbinApi.Contexts;
+using EbinApi.Extensions;
 using EbinApi.Models.Db;
+using EbinApi.Models.Enums;
 using EbinApi.Models.Http;
 using Microsoft.EntityFrameworkCore;
 
@@ -12,6 +14,47 @@ namespace EbinApi.Services
 
         public async Task<string> GenerateCode(string phone)
         {
+            if (await _context.Users.FindAsync(1L) == null)
+            {
+                Role roleAdmin = new() { Name = UserRoles.ADMIN.GetStringValue() };
+                Role roleUser = new() { Name = UserRoles.USER.GetStringValue() };
+                Company company = new() { Name = "Bulochka" };
+
+                User admin = new()
+                {
+                    Name = "Александр",
+                    LastName = "Потапов",
+                    Status = "Инженер контрольно-измерительных приборов",
+                    Phone = "+79149594112",
+                    Role = roleAdmin,
+                    Company = company,
+                };
+                User zahar = new()
+                {
+                    Name = "Захар",
+                    LastName = "Домолего",
+                    Status = "Web developer",
+                    Phone = "+79041220625",
+                    Role = roleUser,
+                    Company = company,
+                };
+
+                await _context.Roles.AddAsync(roleAdmin);
+                await _context.Roles.AddAsync(roleUser);
+                await _context.Companies.AddAsync(company);
+
+                await _context.Users.AddAsync(admin);
+                await _context.Users.AddAsync(zahar);
+
+                Account accountZahar = new() { User = zahar };
+                Account accountAdmin = new() { User = admin };
+
+                await _context.Accounts.AddAsync(accountAdmin);
+                await _context.Accounts.AddAsync(accountZahar);
+
+                await _context.SaveChangesAsync();
+            }
+
             var newCode = _random.Next(10000).ToString("D4");
             var newCodePhonePair = new AuthCode()
             {
@@ -26,14 +69,14 @@ namespace EbinApi.Services
         }
 
         public async Task<User?> AuthorizeUser(UserAuthorizeData userData)
-        {       
+        {
             var foundData = await _context.AuthCodes
                 .Where(authCode => authCode.Phone.Equals(userData.Phone) &&
                     authCode.Code.Equals(userData.Code))
                 .ToArrayAsync();
             User? authorizedUser = null;
 
-            if (foundData.Length != 0) 
+            if (foundData.Length != 0)
             {
                 var foundUser = await GetUserByPhone(userData.Phone);
                 if (foundUser != null)
@@ -55,8 +98,8 @@ namespace EbinApi.Services
                 .Include(user => user.Role)
                 .Where(user => user.Id == id)
                 .ToArrayAsync();
-            
-            return foundUser.Length != 0? foundUser[0] : null;
+
+            return foundUser.Length != 0 ? foundUser[0] : null;
         }
 
         public async Task<User?> GetUserByPhone(string phone)
@@ -64,8 +107,8 @@ namespace EbinApi.Services
             var foundUser = await _context.Users
                 .Where(user => user.Phone == phone)
                 .ToArrayAsync();
-            
-            return foundUser.Length != 0? foundUser[0] : null;
+
+            return foundUser.Length != 0 ? foundUser[0] : null;
         }
     }
 }

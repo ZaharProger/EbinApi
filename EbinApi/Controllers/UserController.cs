@@ -82,7 +82,7 @@ namespace EbinApi.Controllers
         }
 
         [HttpGet]
-        [Authorize]
+        [AllowAnonymous]
         public async Task<IActionResult> GetUserInfo()
         {
             var authorizedUser = await CheckSession();
