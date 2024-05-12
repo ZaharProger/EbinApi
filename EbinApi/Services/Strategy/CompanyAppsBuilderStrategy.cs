@@ -35,7 +35,7 @@ namespace EbinApi.Services
                         new FileInfo(
                             app.Updates
                                 .OrderBy(update => -update.Date)
-                                .Last()
+                                .First()
                                 .FilePath ?? ""
                         )
                         .Length
