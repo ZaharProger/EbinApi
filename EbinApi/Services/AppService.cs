@@ -277,6 +277,7 @@ namespace EbinApi.Services
                             .ToArrayAsync();
 
                         foundApp.Companies.Clear();
+                        await _context.SaveChangesAsync();
                         foundApp.Companies.AddRange(acceptedCompanies);
                     }
 
