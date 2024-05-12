@@ -2,6 +2,5 @@ EbinApi/bin
 *.suo
 *.user
 EbinApi/obj
-appsettings.json
 Repository/
 .DS_Store
