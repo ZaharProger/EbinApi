@@ -47,7 +47,7 @@ namespace EbinApi.Models.Db
         [NotMapped]
         public bool IsInstalled { get; set; }
 
-        [NotMapped]
+        [Column("access", TypeName = "varchar(100)")]
         public string Access { get; set; }
 
         [NotMapped]
