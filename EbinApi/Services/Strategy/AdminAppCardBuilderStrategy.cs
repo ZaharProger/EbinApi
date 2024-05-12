@@ -47,7 +47,8 @@ namespace EbinApi.Services.Strategy
                         0.0F :
                         app.Reviews.Sum(review => review.Rating) / app.Reviews.Count,
                     Updates = app.Updates,
-                    Reviews = app.Reviews
+                    Reviews = app.Reviews,
+                    Companies = app.Companies,
                 });
         }
     }

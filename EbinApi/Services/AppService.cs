@@ -121,7 +121,7 @@ namespace EbinApi.Services
                     FilePath = apkFilePath
                 });
 
-                if (appData.Companies != null && appData.Companies != "" && appData.Access == AppAccesses.PARTIAL.GetStringValue())
+                if (appData.Companies != null && appData.Companies != "" && appData.Access.Equals(AppAccesses.PARTIAL.GetStringValue()))
                 {
                     var splittedCompanies = appData.Companies
                         .Split(",", StringSplitOptions.RemoveEmptyEntries)
@@ -266,7 +266,7 @@ namespace EbinApi.Services
                         foundAppUpdates[i].Description = foundNewUpdate.Description;
                     }
 
-                    if (appData.Companies != null && appData.Companies != "" && appData.Access == AppAccesses.PARTIAL.GetStringValue())
+                    if (appData.Companies != null && appData.Companies != "" && appData.Access.Equals(AppAccesses.PARTIAL.GetStringValue()))
                     {
                         var splittedCompanies = appData.Companies
                             .Split(",", StringSplitOptions.RemoveEmptyEntries)
