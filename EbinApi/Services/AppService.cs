@@ -280,8 +280,11 @@ namespace EbinApi.Services
                             .ToArrayAsync();
 
                         foundApp[0].Companies.Clear();
-                        await _context.SaveChangesAsync();
                         foundApp[0].Companies.AddRange(acceptedCompanies);
+                    }
+                    else if (!appData.Access.Equals(AppAccesses.PARTIAL.GetStringValue()))
+                    {
+                        foundApp[0].Companies.Clear();
                     }
 
                     await _context.SaveChangesAsync();
