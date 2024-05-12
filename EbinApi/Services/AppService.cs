@@ -219,18 +219,21 @@ namespace EbinApi.Services
                     }
                 }
 
-                var foundApp = await _context.Apps.FindAsync(long.Parse(appData.Id));
-                if (foundApp != null)
+                var foundApp = await _context.Apps
+                    .Where(app => app.Id == long.Parse(appData.Id))
+                    .Include(app => app.Companies)
+                    .ToArrayAsync();
+                if (foundApp.Length != 0)
                 {
-                    foundApp.Name = appData.Name;
-                    foundApp.Status = appData.Status;
-                    foundApp.Access = appData.Access;
-                    foundApp.Developer = appData.Developer;
-                    foundApp.Description = appData.Description;
-                    foundApp.MinAndroid = appData.MinAndroid;
-                    foundApp.MinIos = appData.MinIos;
-                    foundApp.Icon = iconFilePath;
-                    foundApp.Images = imagesFilePaths.Count != 0 ?
+                    foundApp[0].Name = appData.Name;
+                    foundApp[0].Status = appData.Status;
+                    foundApp[0].Access = appData.Access;
+                    foundApp[0].Developer = appData.Developer;
+                    foundApp[0].Description = appData.Description;
+                    foundApp[0].MinAndroid = appData.MinAndroid;
+                    foundApp[0].MinIos = appData.MinIos;
+                    foundApp[0].Icon = iconFilePath;
+                    foundApp[0].Images = imagesFilePaths.Count != 0 ?
                         string.Join("\n", imagesFilePaths) :
                         null;
 
@@ -246,7 +249,7 @@ namespace EbinApi.Services
                     }
 
                     var foundAppUpdates = await _context.Updates
-                        .Where(update => update.AppId == foundApp.Id)
+                        .Where(update => update.AppId == foundApp[0].Id)
                         .OrderBy(update => -update.Id)
                         .ToListAsync();
                     var updatesIds = appData.Updates
@@ -276,9 +279,9 @@ namespace EbinApi.Services
                             .Where(company => splittedCompanies.Contains(company.Id))
                             .ToArrayAsync();
 
-                        foundApp.Companies.Clear();
+                        foundApp[0].Companies.Clear();
                         await _context.SaveChangesAsync();
-                        foundApp.Companies.AddRange(acceptedCompanies);
+                        foundApp[0].Companies.AddRange(acceptedCompanies);
                     }
 
                     await _context.SaveChangesAsync();
