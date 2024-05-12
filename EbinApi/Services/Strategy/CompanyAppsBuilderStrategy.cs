@@ -13,6 +13,24 @@ namespace EbinApi.Services
 
         public override IQueryable<App> Build(EbinContext context)
         {
+            Func<List<Update>, string?> calcSizeFunc = (updates) =>
+            {
+                string? lastUpdateFilePath = null;
+
+                if (updates.Count != 0)
+                {
+                    lastUpdateFilePath = updates
+                        .OrderBy(update => -update.Date)
+                        .First()
+                        .FilePath;
+                }
+
+                return lastUpdateFilePath != null? 
+                    new FileInfo(lastUpdateFilePath).Length.FormatSize()
+                    :
+                    null;
+            };
+            
             var appsQuery = base.Build(context)
                 .Where(app => app.Access == AppAccesses.OPEN.GetStringValue() ||
                     (app.Access == AppAccesses.PARTIAL.GetStringValue() && 
@@ -31,16 +49,7 @@ namespace EbinApi.Services
                     Id = app.Id,
                     Name = app.Name,
                     Icon = app.Icon,
-                    Size = app.Updates.Count != 0?
-                        new FileInfo(
-                            app.Updates
-                                .OrderBy(update => -update.Date)
-                                .First()
-                                .FilePath ?? ""
-                        )
-                        .Length
-                        .FormatSize() :
-                        null,
+                    Size = calcSizeFunc(app.Updates),
                     IsInstalled = app.Users
                         .Any(userApp => userApp.Id == _user.Id)
                 });

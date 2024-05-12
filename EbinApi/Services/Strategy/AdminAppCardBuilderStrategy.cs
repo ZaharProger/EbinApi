@@ -6,12 +6,30 @@ using Microsoft.EntityFrameworkCore;
 
 namespace EbinApi.Services.Strategy
 {
-    public class AdminAppCardBuilderStrategy(long appId): AppsBuilderStrategy
+    public class AdminAppCardBuilderStrategy(long appId) : AppsBuilderStrategy
     {
         private readonly long _appId = appId;
 
         public override IQueryable<App> Build(EbinContext context)
         {
+            Func<List<Update>, string?> calcSizeFunc = (updates) =>
+            {
+                string? lastUpdateFilePath = null;
+
+                if (updates.Count != 0)
+                {
+                    lastUpdateFilePath = updates
+                        .OrderBy(update => -update.Date)
+                        .First()
+                        .FilePath;
+                }
+
+                return lastUpdateFilePath != null? 
+                    new FileInfo(lastUpdateFilePath).Length.FormatSize()
+                    :
+                    null;
+            };
+
             return base.Build(context)
                 .Where(app => app.Id == _appId)
                 .Include(app => app.Reviews)
@@ -29,21 +47,12 @@ namespace EbinApi.Services.Strategy
                     Images = app.Images,
                     MinIos = app.MinIos,
                     MinAndroid = app.MinAndroid,
-                    Size = app.Updates.Count != 0?
-                        new FileInfo(
-                            app.Updates
-                                .OrderBy(update => -update.Date)
-                                .First()
-                                .FilePath ?? ""
-                        )
-                        .Length
-                        .FormatSize() :
-                        null,
-                    LastUpdate = app.Updates.Count != 0?
+                    Size = calcSizeFunc(app.Updates),
+                    LastUpdate = app.Updates.Count != 0 ?
                         app.Updates.OrderBy(update => -update.Date).First() :
                         null,
                     Downloads = app.Users.Count,
-                    Rating = app.Reviews.Count == 0?
+                    Rating = app.Reviews.Count == 0 ?
                         0.0F :
                         app.Reviews.Sum(review => review.Rating) / app.Reviews.Count,
                     Updates = app.Updates,
