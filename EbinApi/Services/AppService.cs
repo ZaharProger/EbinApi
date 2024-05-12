@@ -222,6 +222,7 @@ namespace EbinApi.Services
                 var foundApp = await _context.Apps
                     .Where(app => app.Id == long.Parse(appData.Id))
                     .Include(app => app.Companies)
+                    .Include(app => app.Updates)
                     .ToArrayAsync();
                 if (foundApp.Length != 0)
                 {
@@ -248,25 +249,26 @@ namespace EbinApi.Services
                         };
                     }
 
-                    var foundAppUpdates = await _context.Updates
-                        .Where(update => update.AppId == foundApp[0].Id)
-                        .OrderBy(update => -update.Id)
-                        .ToListAsync();
                     var updatesIds = appData.Updates
                         .Select(update => update.Id)
                         .ToArray();
-                    foundAppUpdates.RemoveAll(update => !updatesIds.Contains(update.Id));
-                    for (int i = 0; i < foundAppUpdates.Count; ++i)
+                    foundApp[0].Updates.RemoveAll(update => !updatesIds.Contains(update.Id));
+                    var sortedUpdates = foundApp[0].Updates
+                        .OrderBy(update => -update.Date)
+                        .ToArray();
+                        
+                    for (int i = 0; i < sortedUpdates.Length; ++i)
                     {
                         if (i == 0)
                         {
-                            foundAppUpdates[i].TestFlight = appData.TestFlight;
-                            foundAppUpdates[i].FilePath = apkFilePath;
+                            sortedUpdates[i].TestFlight = appData.TestFlight;
+                            sortedUpdates[i].FilePath = apkFilePath;
                         }
 
-                        var foundNewUpdate = appData.Updates.Find(newUpdate => newUpdate.Id == foundAppUpdates[i].Id);
-                        foundAppUpdates[i].Version = foundNewUpdate.Version;
-                        foundAppUpdates[i].Description = foundNewUpdate.Description;
+                        var foundNewUpdate = appData.Updates
+                            .Find(newUpdate => newUpdate.Id == sortedUpdates[i].Id);
+                        sortedUpdates[i].Version = foundNewUpdate.Version;
+                        sortedUpdates[i].Description = foundNewUpdate.Description;
                     }
 
                     if (appData.Companies != null && appData.Companies != "" && appData.Access.Equals(AppAccesses.PARTIAL.GetStringValue()))
