@@ -54,6 +54,7 @@ namespace EbinApi
 
             builder.Services.AddTransient<UserService>();
             builder.Services.AddTransient<AppService>();
+            builder.Services.AddTransient<CompanyService>();
 
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
@@ -68,14 +69,10 @@ namespace EbinApi
 
             FileExtensionContentTypeProvider contentTypes = new();
             contentTypes.Mappings[".apk"] = "application/vnd.android.package-archive";
-            app.UseStaticFiles(new StaticFileOptions
-            {
-                FileProvider = new PhysicalFileProvider(
-                    Path.Combine(builder.Environment.ContentRootPath, "Repository")
-                ),
-                RequestPath = "/Repository",
-                ContentTypeProvider = contentTypes
-            });
+            contentTypes.Mappings[".png"] = "image/png";
+            contentTypes.Mappings[".jpg"] = "image/jpg";
+            contentTypes.Mappings[".jpeg"] = "image/jpeg";
+            app.UseStaticFiles();
 
             app.UseHttpsRedirection();
             app.UseAuthentication();
@@ -88,6 +85,23 @@ namespace EbinApi
                 .AllowCredentials()
                 .AllowAnyMethod()
                 .AllowAnyHeader());
+
+            app.UseStaticFiles(new StaticFileOptions
+            {
+                FileProvider = new PhysicalFileProvider(
+                    Path.Combine(builder.Environment.ContentRootPath, "Repository")
+                ),
+                RequestPath = "/Repository",
+                ContentTypeProvider = contentTypes,
+                OnPrepareResponse = (context) =>
+                {
+                    context.Context.Response.Headers.Append("Access-Control-Allow-Origin", "*");
+                    context.Context.Response.Headers.Append("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+                    context.Context.Response.Headers.Append("Access-Control-Expose-Headers", "Content-Disposition, Content-Length, X-Content-Transfer-Id");
+                    context.Context.Response.Headers.Append("Content-Disposition", "inline");
+                    context.Context.Response.Headers.Append("X-Content-Transfer-Id", "12345");
+                }
+            });
 
             app.Run();
         }

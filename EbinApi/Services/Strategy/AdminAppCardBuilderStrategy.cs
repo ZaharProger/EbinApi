@@ -23,9 +23,7 @@ namespace EbinApi.Services.Strategy
                     Name = app.Name,
                     Status = app.Status,
                     Icon = app.Icon,
-                    Access = app.Users.Count == 0? 
-                        AppAccesses.CLOSE.GetStringValue() : 
-                        AppAccesses.OPEN.GetStringValue(),
+                    Access = app.Access,
                     Description = app.Description,
                     Developer = app.Developer,
                     Images = app.Images,
@@ -36,7 +34,7 @@ namespace EbinApi.Services.Strategy
                             app.Updates
                                 .OrderBy(update => -update.Date)
                                 .Last()
-                                .FilePath
+                                .FilePath ?? ""
                         )
                         .Length
                         .FormatSize() :

@@ -23,7 +23,7 @@ namespace EbinApi.Services.Strategy
                             app.Updates
                                 .OrderBy(update => -update.Date)
                                 .Last()
-                                .FilePath
+                                .FilePath ?? ""
                         )
                         .Length
                         .FormatSize() :

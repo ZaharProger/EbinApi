@@ -93,10 +93,30 @@ namespace EbinApi.Services
         public async Task<User?> GetUserById(long id)
         {
             var foundUser = await _context.Users
+                .Where(user => user.Id == id)
                 .Include(user => user.Account)
                 .Include(user => user.Company)
                 .Include(user => user.Role)
-                .Where(user => user.Id == id)
+                .Select(user => new User()
+                {
+                    Id = user.Id,
+                    Name = user.Name,
+                    Status = user.Status,
+                    CompanyId = user.CompanyId,
+                    Company = new()
+                    {
+                        Name = user.Company.Name
+                    },
+                    Account = new()
+                    {
+                        DarkTheme = user.Account.DarkTheme,
+                        PushInstall = user.Account.PushInstall,
+                        PushUpdate = user.Account.PushUpdate,
+                        UserId = user.Id
+                    },
+                    Role = user.Role,
+                    RoleId = user.RoleId
+                })
                 .ToArrayAsync();
 
             return foundUser.Length != 0 ? foundUser[0] : null;

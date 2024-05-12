@@ -232,6 +232,7 @@ namespace EbinApi.Controllers
         }
 
         [HttpPut]
+        [DisableRequestSizeLimit]
         public async Task<IActionResult> EditApp([FromForm] EditAppData appData)
         {
             var authorizedUser = await CheckSession();
@@ -261,6 +262,36 @@ namespace EbinApi.Controllers
                         });
                     }
                 }
+            }
+
+            return response;
+        }
+    
+        [HttpGet]
+        [Route("download")]
+        public async Task<IActionResult> DownloadApp([FromQuery] DownloadAppParams downloadAppParams)
+        {
+            var strategy = new DownloadAppStrategy(downloadAppParams.AppId);
+            var foundApp = await _appService.GetApp(strategy);
+            IActionResult response;
+
+            if (foundApp != null)
+            {
+                var appVersion = foundApp.LastUpdate.Version;
+                if (appVersion != downloadAppParams.Version || appVersion == "")
+                {
+                    var appPath = foundApp.LastUpdate.FilePath;
+                    var appData = await System.IO.File.ReadAllBytesAsync(appPath);
+                    var contentType = "application/vnd.android.package-archive";
+
+                    response = File(appData, contentType, appPath);
+                }
+                else {
+                    response = Ok();
+                }
+            }
+            else {
+                response = NotFound();
             }
 
             return response;

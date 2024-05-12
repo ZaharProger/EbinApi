@@ -96,24 +96,7 @@ namespace EbinApi.Controllers
                 response = new JsonResult(new SingleObjectResponse<User>()
                 {
                     Message = "",
-                    Object = new User()
-                    {
-                        Id = authorizedUser.Id,
-                        Name = authorizedUser.Name,
-                        Status = authorizedUser.Status,
-                        CompanyId = authorizedUser.CompanyId,
-                        Company = new()
-                        {
-                            Name = authorizedUser.Company.Name
-                        },
-                        Account = new()
-                        {
-                            DarkTheme = authorizedUser.Account.DarkTheme,
-                            PushInstall = authorizedUser.Account.PushInstall,
-                            PushUpdate = authorizedUser.Account.PushUpdate,
-                            UserId = authorizedUser.Id
-                        }
-                    }
+                    Object = authorizedUser
                 });
             }
 

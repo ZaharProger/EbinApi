@@ -18,9 +18,7 @@ namespace EbinApi.Services.Strategy
                     Name = app.Name,
                     Icon = app.Icon,
                     Developer = app.Developer,
-                    Access = app.Users.Count == 0? 
-                        AppAccesses.CLOSE.GetStringValue() : 
-                        AppAccesses.OPEN.GetStringValue(),
+                    Access = app.Access,
                     Status = app.Status,
                     Downloads = app.Users.Count,
                     LastUpdate = app.Updates.Count != 0?
@@ -28,8 +26,7 @@ namespace EbinApi.Services.Strategy
                         null,
                     Rating = app.Reviews.Count == 0?
                         0.0F :
-                        app.Reviews.Sum(review => review.Rating) / app.Reviews.Count,
-                    Updates = app.Updates
+                        app.Reviews.Sum(review => review.Rating) / app.Reviews.Count
                 });
         }
     }

@@ -1,5 +1,7 @@
 using EbinApi.Contexts;
+using EbinApi.Extensions;
 using EbinApi.Models.Db;
+using EbinApi.Models.Enums;
 using EbinApi.Models.Http;
 using EbinApi.Services.Strategy;
 using Microsoft.EntityFrameworkCore;
@@ -60,7 +62,7 @@ namespace EbinApi.Services
                 if (appData.IconFile != null)
                 {
                     var imageId = Guid.NewGuid().ToString();
-                    iconFilePath = $"{iconBasePath}{imageId}_{appData.IconFile.FileName}";
+                    iconFilePath = $"{iconBasePath}{imageId}{Path.GetExtension(appData.IconFile.FileName)}";
                     using (Stream stream = new FileStream(iconFilePath, FileMode.Create))
                     {
                         appData.IconFile.CopyTo(stream);
@@ -73,7 +75,7 @@ namespace EbinApi.Services
                     foreach (var imageFile in appData.ImagesFiles)
                     {
                         var imageId = Guid.NewGuid().ToString();
-                        var imageFilePath = $"{imagesBasePath}{imageId}_{imageFile.FileName}";
+                        var imageFilePath = $"{imagesBasePath}{imageId}{Path.GetExtension(imageFile.FileName)}";
                         using (Stream stream = new FileStream(imageFilePath, FileMode.Create))
                         {
                             imageFile.CopyTo(stream);
@@ -86,6 +88,7 @@ namespace EbinApi.Services
                 {
                     Name = appData.Name,
                     Status = appData.Status,
+                    Access = appData.Access,
                     Developer = appData.Developer,
                     Description = appData.Description,
                     MinAndroid = appData.MinAndroid,
@@ -102,7 +105,7 @@ namespace EbinApi.Services
                 if (appData.ApkFile != null)
                 {
                     var apkId = Guid.NewGuid().ToString();
-                    apkFilePath = $"{apkBasePath}{apkId}_{appData.ApkFile.FileName}";
+                    apkFilePath = $"{apkBasePath}{apkId}{Path.GetExtension(appData.ApkFile.FileName)}";
                     using (Stream stream = new FileStream(apkFilePath, FileMode.Create))
                     {
                         appData.ApkFile.CopyTo(stream);
@@ -113,19 +116,22 @@ namespace EbinApi.Services
                 {
                     Version = appData.Version,
                     Date = DateTimeOffset.UtcNow.ToUnixTimeSeconds() * 1000,
-                    Description = appData.Description,
+                    Description = "Релизная версия приложения",
                     TestFlight = appData.TestFlight,
                     FilePath = apkFilePath
                 });
 
-                var splittedCompanies = appData.Companies
-                    .Split(",", StringSplitOptions.RemoveEmptyEntries)
-                    .Select(long.Parse)
-                    .ToArray();
-                var acceptedCompanies = await _context.Companies
-                    .Where(company => splittedCompanies.Contains(company.Id))
-                    .ToArrayAsync();
-                newApp.Companies.AddRange(acceptedCompanies);
+                if (appData.Companies != null && appData.Companies != "" && appData.Access == AppAccesses.PARTIAL.GetStringValue())
+                {
+                    var splittedCompanies = appData.Companies
+                        .Split(",", StringSplitOptions.RemoveEmptyEntries)
+                        .Select(long.Parse)
+                        .ToArray();
+                    var acceptedCompanies = await _context.Companies
+                        .Where(company => splittedCompanies.Contains(company.Id))
+                        .ToArrayAsync();
+                    newApp.Companies.AddRange(acceptedCompanies);
+                }
 
                 await _context.SaveChangesAsync();
             }
@@ -153,7 +159,7 @@ namespace EbinApi.Services
                     if (updateData.ApkFile != null)
                     {
                         var apkId = Guid.NewGuid().ToString();
-                        apkFilePath = $"{apkBasePath}{apkId}_{updateData.ApkFile.FileName}";
+                        apkFilePath = $"{apkBasePath}{apkId}{Path.GetExtension(updateData.ApkFile.FileName)}";
                         using (Stream stream = new FileStream(apkFilePath, FileMode.Create))
                         {
                             updateData.ApkFile.CopyTo(stream);
@@ -191,7 +197,7 @@ namespace EbinApi.Services
                 if (appData.IconFile != null)
                 {
                     var imageId = Guid.NewGuid().ToString();
-                    iconFilePath = $"{iconBasePath}{imageId}_{appData.IconFile.FileName}";
+                    iconFilePath = $"{iconBasePath}{imageId}{Path.GetExtension(appData.IconFile.FileName)}";
                     using (Stream stream = new FileStream(iconFilePath, FileMode.Create))
                     {
                         appData.IconFile.CopyTo(stream);
@@ -204,7 +210,7 @@ namespace EbinApi.Services
                     foreach (var imageFile in appData.ImagesFiles)
                     {
                         var imageId = Guid.NewGuid().ToString();
-                        var imageFilePath = $"{imagesBasePath}{imageId}_{imageFile.FileName}";
+                        var imageFilePath = $"{imagesBasePath}{imageId}{Path.GetExtension(imageFile.FileName)}";
                         using (Stream stream = new FileStream(imageFilePath, FileMode.Create))
                         {
                             imageFile.CopyTo(stream);
@@ -218,6 +224,7 @@ namespace EbinApi.Services
                 {
                     foundApp.Name = appData.Name;
                     foundApp.Status = appData.Status;
+                    foundApp.Access = appData.Access;
                     foundApp.Developer = appData.Developer;
                     foundApp.Description = appData.Description;
                     foundApp.MinAndroid = appData.MinAndroid;
@@ -231,7 +238,7 @@ namespace EbinApi.Services
                     if (appData.ApkFile != null)
                     {
                         var apkId = Guid.NewGuid().ToString();
-                        apkFilePath = $"{apkBasePath}{apkId}_{appData.ApkFile.FileName}";
+                        apkFilePath = $"{apkBasePath}{apkId}{Path.GetExtension(appData.ApkFile.FileName)}";
                         using (Stream stream = new FileStream(apkFilePath, FileMode.Create))
                         {
                             appData.ApkFile.CopyTo(stream);
@@ -241,25 +248,37 @@ namespace EbinApi.Services
                     var foundAppUpdates = await _context.Updates
                         .Where(update => update.AppId == foundApp.Id)
                         .OrderBy(update => -update.Id)
-                        .ToArrayAsync();
-                    if (foundAppUpdates.Length != 0)
+                        .ToListAsync();
+                    var updatesIds = appData.Updates
+                        .Select(update => update.Id)
+                        .ToArray();
+                    foundAppUpdates.RemoveAll(update => !updatesIds.Contains(update.Id));
+                    for (int i = 0; i < foundAppUpdates.Count; ++i)
                     {
-                        foundAppUpdates[0].Version = appData.Version;
-                        foundAppUpdates[0].Description = appData.Description;
-                        foundAppUpdates[0].TestFlight = appData.TestFlight;
-                        foundAppUpdates[0].FilePath = apkFilePath;
+                        if (i == 0)
+                        {
+                            foundAppUpdates[i].TestFlight = appData.TestFlight;
+                            foundAppUpdates[i].FilePath = apkFilePath;
+                        }
+
+                        var foundNewUpdate = appData.Updates.Find(newUpdate => newUpdate.Id == foundAppUpdates[i].Id);
+                        foundAppUpdates[i].Version = foundNewUpdate.Version;
+                        foundAppUpdates[i].Description = foundNewUpdate.Description;
                     }
 
-                    var splittedCompanies = appData.Companies
+                    if (appData.Companies != null && appData.Companies != "" && appData.Access == AppAccesses.PARTIAL.GetStringValue())
+                    {
+                        var splittedCompanies = appData.Companies
                             .Split(",", StringSplitOptions.RemoveEmptyEntries)
                             .Select(long.Parse)
                             .ToArray();
-                    var acceptedCompanies = await _context.Companies
-                        .Where(company => splittedCompanies.Contains(company.Id))
-                        .ToArrayAsync();
-                    
-                    foundApp.Companies.Clear();
-                    foundApp.Companies.AddRange(acceptedCompanies);
+                        var acceptedCompanies = await _context.Companies
+                            .Where(company => splittedCompanies.Contains(company.Id))
+                            .ToArrayAsync();
+
+                        foundApp.Companies.Clear();
+                        foundApp.Companies.AddRange(acceptedCompanies);
+                    }
 
                     await _context.SaveChangesAsync();
                 }

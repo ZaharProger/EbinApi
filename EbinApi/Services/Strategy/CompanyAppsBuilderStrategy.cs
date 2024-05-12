@@ -14,8 +14,9 @@ namespace EbinApi.Services
         public override IQueryable<App> Build(EbinContext context)
         {
             var appsQuery = base.Build(context)
-                .Where(app => app.Companies
-                    .Any(appCompany => appCompany.Id == _user.CompanyId));
+                .Where(app => app.Access == AppAccesses.OPEN.GetStringValue() ||
+                    (app.Access == AppAccesses.PARTIAL.GetStringValue() && 
+                    app.Companies.Any(appCompany => appCompany.Id == _user.CompanyId)));
             
             if (_isTest)
             {
@@ -35,7 +36,7 @@ namespace EbinApi.Services
                             app.Updates
                                 .OrderBy(update => -update.Date)
                                 .Last()
-                                .FilePath
+                                .FilePath ?? ""
                         )
                         .Length
                         .FormatSize() :

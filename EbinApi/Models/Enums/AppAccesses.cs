@@ -2,10 +2,12 @@ namespace EbinApi.Models.Enums
 {
     public enum AppAccesses
     {
-        [StringValue("Открытый")]
+        [StringValue("Общий")]
         OPEN,
 
         [StringValue("Закрытый")]
-        CLOSE
+        CLOSE,
+        [StringValue("Частичный")]
+        PARTIAL
     }
 }

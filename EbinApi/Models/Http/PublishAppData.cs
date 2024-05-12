@@ -21,6 +21,7 @@ namespace EbinApi.Models.Http
         [JsonPropertyName("apkFile")]
         public IFormFile? ApkFile { get; set; }
         public string? TestFlight { get; set; }
-        public string Companies { get; set; } = "";
+        public string? Companies { get; set; }
+        public string Access { get; set; }
     }
 }

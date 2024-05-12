@@ -13,9 +13,7 @@ namespace EbinApi.Services.Strategy
                 .Select(app => new App()
                 {
                     Id = app.Id,
-                    Name = app.Name,
-                    Icon = app.Icon,
-                    Developer = app.Developer
+                    Name = app.Name
                 });
         }
     }

@@ -1,6 +1,7 @@
 using EbinApi.Contexts;
 using EbinApi.Extensions;
 using EbinApi.Models.Db;
+using EbinApi.Models.Enums;
 using Microsoft.EntityFrameworkCore;
 
 namespace EbinApi.Services.Strategy
@@ -13,8 +14,10 @@ namespace EbinApi.Services.Strategy
         public override IQueryable<App> Build(EbinContext context)
         {
             return base.Build(context)
-                .Where(app => app.Id == _appId && app.Companies
-                    .Any(appCompany => appCompany.Id == user.CompanyId))
+                .Where(app => app.Id == _appId && 
+                    (app.Access == AppAccesses.OPEN.GetStringValue() || 
+                    (app.Access == AppAccesses.PARTIAL.GetStringValue() && app.Companies
+                        .Any(appCompany => appCompany.Id == user.CompanyId))))
                 .Include(app => app.Updates)
                 .Select(app => new App()
                 {

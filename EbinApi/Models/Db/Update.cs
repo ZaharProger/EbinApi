@@ -19,8 +19,8 @@ namespace EbinApi.Models.Db
         [Column("description", TypeName = "varchar(500)")]
         public string? Description { get; set; }
 
-        [Column("file_path", TypeName = "varchar(100)"), Required]
-        public string FilePath { get; set; }
+        [Column("file_path", TypeName = "varchar(100)")]
+        public string? FilePath { get; set; }
 
         [Column("testflight", TypeName = "varchar(150)")]
         public string? TestFlight { get; set; }
