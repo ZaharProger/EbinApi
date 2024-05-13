@@ -1,8 +1,11 @@
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
 USER root
 WORKDIR /app
-RUN mkdir -p www/
-RUN mkdir -p www/Repository/
+RUN mkdir -p wwwroot/
+RUN mkdir -p wwwroot/Repository/
+RUN mkdir -p wwwroot/Repository/apk
+RUN mkdir -p wwwroot/Repository/icons
+RUN mkdir -p wwwroot/Repository/images
 EXPOSE 8080
 
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
