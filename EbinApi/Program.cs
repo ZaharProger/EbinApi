@@ -91,7 +91,7 @@ namespace EbinApi
                 FileProvider = new PhysicalFileProvider(
                     Path.Combine(builder.Environment.ContentRootPath, "wwwroot", "Repository")
                 ),
-                RequestPath = "/Repository",
+                RequestPath = "/wwwroot/Repository",
                 ContentTypeProvider = contentTypes,
                 OnPrepareResponse = (context) =>
                 {
