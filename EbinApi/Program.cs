@@ -74,7 +74,7 @@ namespace EbinApi
             contentTypes.Mappings[".jpeg"] = "image/jpeg";
             app.UseStaticFiles();
 
-            // app.UseHttpsRedirection();
+            app.UseHttpsRedirection();
             app.UseAuthentication();
             app.UseAuthorization();
             app.UseSession();
