@@ -11,9 +11,9 @@ namespace EbinApi.Services
     public class AppService(EbinContext context)
     {
         private readonly EbinContext _context = context;
-        private readonly string apkBasePath = "Repository/apk/";
-        private readonly string iconBasePath = "Repository/icons/";
-        private readonly string imagesBasePath = "Repository/images/";
+        private readonly string apkBasePath = "wwwroot/Repository/apk/";
+        private readonly string iconBasePath = "wwwroot/Repository/icons/";
+        private readonly string imagesBasePath = "wwwroot/Repository/images/";
 
         public async Task<List<App>> GetApps(AppsBuilderStrategy strategy)
         {

@@ -2,5 +2,5 @@ EbinApi/bin
 *.suo
 *.user
 EbinApi/obj
-Repository/
+wwwroot/
 .DS_Store
