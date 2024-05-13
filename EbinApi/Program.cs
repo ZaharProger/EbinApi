@@ -89,7 +89,7 @@ namespace EbinApi
             app.UseStaticFiles(new StaticFileOptions
             {
                 FileProvider = new PhysicalFileProvider(
-                    Path.Combine("wwwroot", "Repository")
+                    Path.Combine(builder.Environment.ContentRootPath, "wwwroot", "Repository")
                 ),
                 RequestPath = "/Repository",
                 ContentTypeProvider = contentTypes,
