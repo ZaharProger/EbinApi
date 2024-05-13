@@ -256,7 +256,7 @@ namespace EbinApi.Services
                     var sortedUpdates = foundApp[0].Updates
                         .OrderBy(update => -update.Date)
                         .ToArray();
-                        
+
                     for (int i = 0; i < sortedUpdates.Length; ++i)
                     {
                         if (i == 0)
@@ -293,6 +293,42 @@ namespace EbinApi.Services
                 }
             }
             catch (Exception ex)
+            {
+                isSuccessful = false;
+            }
+
+            return isSuccessful;
+        }
+
+        public async Task<bool> AssignAppToUser(App app, User user, bool update)
+        {
+            bool isSuccessful;
+            try
+            {
+                if (update)
+                {
+                    var foundRelation = await _context.UserApps
+                        .Where(userApp => userApp.AppId == app.Id && userApp.UserId == user.Id)
+                        .ToArrayAsync();
+                    if (foundRelation.Length != 0)
+                    {
+                        foundRelation[0].AppVersion = app.LastUpdate.Version;
+                    }
+                }
+                else
+                {
+                    await _context.UserApps.AddAsync(new UserApp()
+                    {
+                        App = app,
+                        User = user,
+                        AppVersion = app.LastUpdate.Version
+                    });
+                }
+
+                await _context.SaveChangesAsync();
+                isSuccessful = true;
+            }
+            catch (Exception)
             {
                 isSuccessful = false;
             }

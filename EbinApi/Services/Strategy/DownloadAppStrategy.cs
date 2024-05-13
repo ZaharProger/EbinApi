@@ -13,11 +13,13 @@ namespace EbinApi.Services.Strategy
             return base.Build(context)
                 .Where(app => app.Id == _appId)
                 .Include(app => app.Updates)
+                .Include(app => app.UserApps)
                 .Select(app => new App()
                 {
                     LastUpdate = app.Updates.Count != 0?
                         app.Updates.OrderBy(update => -update.Date).First() :
                         null,
+                    UserApps = app.UserApps
                 });
         }
     }

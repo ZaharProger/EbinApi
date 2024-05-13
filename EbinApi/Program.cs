@@ -29,7 +29,7 @@ namespace EbinApi
             {
                 options.Cookie.Name = "session_id";
                 options.Cookie.HttpOnly = true;
-                options.Cookie.SecurePolicy = CookieSecurePolicy.None;
+                options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
                 options.Cookie.IsEssential = true;
                 options.IdleTimeout = TimeSpan.FromDays(14);
                 options.Cookie.SameSite = SameSiteMode.None;
@@ -42,7 +42,7 @@ namespace EbinApi
                     options.ExpireTimeSpan = TimeSpan.FromDays(14);
                     options.SlidingExpiration = true;
                     options.Cookie.HttpOnly = true;
-                    options.Cookie.SecurePolicy = CookieSecurePolicy.None;
+                    options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
                     options.Cookie.IsEssential = true;
                     options.Cookie.SameSite = SameSiteMode.None;
                 });

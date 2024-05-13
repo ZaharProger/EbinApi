@@ -269,20 +269,29 @@ namespace EbinApi.Controllers
     
         [HttpGet]
         [Route("download")]
-        public async Task<IActionResult> DownloadApp([FromQuery] DownloadAppParams downloadAppParams)
+        public async Task<IActionResult> DownloadApp([FromQuery] long appId)
         {
-            var strategy = new DownloadAppStrategy(downloadAppParams.AppId);
+            var authorizedUser = await CheckSession();
+            var strategy = new DownloadAppStrategy(appId);
             var foundApp = await _appService.GetApp(strategy);
             IActionResult response;
 
-            if (foundApp != null)
+            if (foundApp != null && authorizedUser != null)
             {
-                var appVersion = foundApp.LastUpdate.Version;
-                if (appVersion != downloadAppParams.Version || appVersion == "")
+                var lastVersion = foundApp.LastUpdate.Version;
+                var installedApp = foundApp.UserApps
+                    .Where(userApp => userApp.UserId == authorizedUser.Id 
+                        && userApp.AppId == appId)
+                    .ToArray();
+
+                if (installedApp.Length == 0 || !installedApp[0].AppVersion.Equals(lastVersion))
                 {
+                    var update = installedApp.Length != 0;
+                    
                     var appPath = foundApp.LastUpdate.FilePath;
                     var appData = await System.IO.File.ReadAllBytesAsync(appPath);
                     var contentType = "application/vnd.android.package-archive";
+                    await _appService.AssignAppToUser(foundApp, authorizedUser, update);
 
                     response = File(appData, contentType, appPath);
                 }
