@@ -16,7 +16,7 @@ namespace EbinApi.Models.Db
         [Required, Column("date")]
         public long Date { get; set; }
 
-        [Column("description", TypeName = "varchar(500)")]
+        [Column("description", TypeName = "varchar(5000)")]
         public string? Description { get; set; }
 
         [Column("file_path", TypeName = "varchar(100)")]

@@ -16,7 +16,7 @@ namespace EbinApi.Models.Db
         [Required, Column("developer", TypeName = "varchar(50)")]
         public string Developer { get; set; }
 
-        [Column("description", TypeName = "varchar(500)")]
+        [Column("description", TypeName = "varchar(5000)")]
         public string? Description { get; set; }
 
         [JsonPropertyName("min_ios")]
