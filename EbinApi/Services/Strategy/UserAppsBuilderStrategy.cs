@@ -1,6 +1,7 @@
 using EbinApi.Contexts;
 using EbinApi.Extensions;
 using EbinApi.Models.Db;
+using Microsoft.EntityFrameworkCore;
 
 namespace EbinApi.Services.Strategy
 {
@@ -29,6 +30,7 @@ namespace EbinApi.Services.Strategy
             };
 
             return base.Build(context)
+                .Include(app => app.Users)
                 .Where(app => app.Users
                     .Any(appUser => appUser.Id == _user.Id))
                 .Select(app => new App()
