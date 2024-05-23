@@ -30,7 +30,7 @@ namespace EbinApi.Services.Strategy
             };
 
             return base.Build(context)
-                .Include(app => app.Users)
+                .Include(app => app.UserApps)
                 .Where(app => app.UserApps
                         .Any(userApp => userApp.Id == _user.Id))
                 .Select(app => new App()

@@ -45,7 +45,7 @@ namespace EbinApi.Services
             }
 
             return appsQuery
-                .Include(app => app.Users)
+                .Include(app => app.UserApps)
                 .Select(app => new App()
                 {
                     Id = app.Id,
