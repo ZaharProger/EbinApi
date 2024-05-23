@@ -93,6 +93,8 @@ namespace EbinApi.Controllers
 
             if (authorizedUser != null)
             {
+                authorizedUser.Phone = "";
+                authorizedUser.LastName = "";
                 response = new JsonResult(new SingleObjectResponse<User>()
                 {
                     Message = "",

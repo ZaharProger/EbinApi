@@ -101,6 +101,8 @@ namespace EbinApi.Services
                 {
                     Id = user.Id,
                     Name = user.Name,
+                    LastName = user.LastName,
+                    Phone = user.Phone,
                     Status = user.Status,
                     CompanyId = user.CompanyId,
                     Company = new()

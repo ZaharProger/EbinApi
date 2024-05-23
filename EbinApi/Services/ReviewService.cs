@@ -23,14 +23,14 @@ namespace EbinApi.Services
             {
                 var newReview = new Review()
                 {
-                    AppId = reviewData.AppId,
+                    App = await _context.Apps.FindAsync(reviewData.AppId),
                     Description = reviewData.Description,
                     Rating = reviewData.Rating,
                     IsViewed = false,
                     Date = DateTimeOffset.UtcNow.ToUnixTimeSeconds() * 1000,
-                    User = user
+                    User = await _context.Users.FindAsync(user.Id)
                 };
-                _context.Reviews.Add(newReview);
+                await _context.Reviews.AddAsync(newReview);
 
                 await _context.SaveChangesAsync();
                 isSuccessful = true;
