@@ -55,6 +55,7 @@ namespace EbinApi
             builder.Services.AddTransient<UserService>();
             builder.Services.AddTransient<AppService>();
             builder.Services.AddTransient<CompanyService>();
+            builder.Services.AddTransient<ReviewService>();
 
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
