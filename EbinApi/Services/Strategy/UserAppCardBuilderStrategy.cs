@@ -37,6 +37,7 @@ namespace EbinApi.Services.Strategy
                     (app.Access == AppAccesses.PARTIAL.GetStringValue() && app.Companies
                         .Any(appCompany => appCompany.Id == user.CompanyId))))
                 .Include(app => app.Updates)
+                .Include(app => app.Users)
                 .Select(app => new App()
                 {
                     Id = app.Id,

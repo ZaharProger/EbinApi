@@ -3,6 +3,7 @@ using EbinApi.Extensions;
 using EbinApi.Models.Db;
 using EbinApi.Models.Enums;
 using EbinApi.Services.Strategy;
+using Microsoft.EntityFrameworkCore;
 
 namespace EbinApi.Services
 {
@@ -44,6 +45,7 @@ namespace EbinApi.Services
             }
 
             return appsQuery
+                .Include(app => app.Users)
                 .Select(app => new App()
                 {
                     Id = app.Id,
