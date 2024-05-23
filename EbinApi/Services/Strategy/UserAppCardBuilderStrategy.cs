@@ -37,7 +37,7 @@ namespace EbinApi.Services.Strategy
                     (app.Access == AppAccesses.PARTIAL.GetStringValue() && app.Companies
                         .Any(appCompany => appCompany.Id == user.CompanyId))))
                 .Include(app => app.Updates)
-                .Include(app => app.Users)
+                .Include(app => app.UserApps)
                 .Select(app => new App()
                 {
                     Id = app.Id,
@@ -54,8 +54,8 @@ namespace EbinApi.Services.Strategy
                         app.Updates.OrderBy(update => -update.Date).First() :
                         null,
                     Updates = app.Updates,
-                    IsInstalled = app.Users
-                        .Any(userApp => userApp.Id == _user.Id)
+                    IsInstalled = app.UserApps
+                        .Any(userApp => userApp.Id == _user.Id && userApp.AppId == _appId)
                 });
         }
     }

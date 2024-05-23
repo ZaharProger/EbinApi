@@ -52,8 +52,8 @@ namespace EbinApi.Services
                     Name = app.Name,
                     Icon = app.Icon,
                     Size = calcSizeFunc(app.Updates),
-                    IsInstalled = app.Users
-                        .Any(userApp => userApp.Id == _user.Id)
+                    IsInstalled = app.UserApps
+                        .Any(userApp => userApp.Id == _user.Id && userApp.AppId == app.Id)
                 });
         }
     }
